@@ -1,0 +1,24 @@
+{
+	"name": "natours",
+	"version": "1.0.0",
+	"description": "",
+	"license": "ISC",
+	"author": "Mohamed Reda",
+	"type": "commonjs",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "nodemon server.js",
+		"start:prod": "NODE_ENV=production nodemon server.js",
+		"debug": "node --inspect server.js"
+	},
+	"dependencies": {
+		"dotenv": "^17.2.3",
+		"express": "^4.21.2",
+		"inspect": "^0.0.2",
+		"mongoose": "^8.19.2",
+		"morgan": "^1.10.1",
+		"nodemailer": "^8.0.0",
+		"slugify": "^1.6.6"
+	}
+}
