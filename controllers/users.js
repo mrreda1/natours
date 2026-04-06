@@ -3,6 +3,7 @@ const catchAsync = require("./../utils/catchAsync");
 const APIFeatures = require("./../utils/apifeatures");
 const AppError = require("./../utils/appError");
 const filterObj = require("./../utils/filterObj");
+const factory = require("./../controllers/handlerFactory");
 
 exports.getAllUsers = catchAsync(async (req, res) => {
   const features = new APIFeatures(User.find(), req.query)
@@ -38,28 +39,7 @@ exports.getUser = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteUser = catchAsync(async (req, res, next) => {
-  const id = req.params.id;
-  const user = await User.findByIdAndDelete(id);
-
-  console.log(id, user);
-
-  if (!user) {
-    return next(new AppError("User not found!", 404));
-  }
-
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
-
-exports.createUser = (req, res) => {
-  res.status(500).json({
-    status: "fail",
-    message: "This route is under construction",
-  });
-};
+exports.deleteUser = factory.deleteOne(User);
 
 exports.updateUser = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
