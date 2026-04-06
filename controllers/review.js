@@ -4,7 +4,15 @@ const AppError = require("./../utils/appError");
 const APIFeatures = require("./../utils/apifeatures");
 
 exports.getAllReviews = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(Review.find(), req.query)
+  let filter = {};
+  if (req.params.tourID) {
+    filter = { tour: req.params.tourID };
+  }
+  if (req.params.userID) {
+    filter = { user: req.params.userID };
+  }
+
+  const features = new APIFeatures(Review.find(filter), req.query)
     .filter()
     .sort()
     .limit()
@@ -36,10 +44,10 @@ exports.getReview = catchAsync(async (req, res, next) => {
 });
 
 exports.createReview = catchAsync(async (req, res, next) => {
-  if(!req.body.tour) {
+  if (!req.body.tour) {
     req.body.tour = req.params.tourID;
   }
-  if(!req.body.user) {
+  if (!req.body.user) {
     req.body.user = req.user.id;
   }
 
