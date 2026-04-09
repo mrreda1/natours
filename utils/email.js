@@ -1,35 +1,35 @@
-const catchAsync = require("./catchAsync");
-const { MailtrapClient } = require("mailtrap");
-const resetTemplate = require("../utils/templates/email-reset");
+const catchAsync = require('./catchAsync');
+const nodemailer = require('nodemailer');
+const passwordResetTemplate = require('./../utils/templates/email-reset');
 
 const sendEmail = catchAsync(async (options) => {
-	const TOKEN = process.env.EMAIL_TOKEN;
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_APP_PASSWORD,
+    },
+  });
 
-	const client = new MailtrapClient({
-		token: TOKEN,
-	});
+  await transporter.sendMail({
+    from: '"Smart Child" <smartchildorg@gmail.com>',
+    to: options.recipientsEmail,
+    subject: options.subject,
+    html: options.html,
+  });
 
-	const sender = {
-		email: process.env.EMAIL,
-		name: "Mailtrap Test",
-	};
-	const recipients = [
-		{
-			// email: options.email,
-			email: "mohamedredaelsaid0@gmail.com",
-		},
-	];
-
-	const response = await client.send({
-		from: sender,
-		to: recipients,
-		subject: options.subject,
-		// text: options.message,
-		html: resetTemplate(options.token),
-		category: options.category,
-	});
-	// .then(console.log, console.error);
-	console.log("Email sent.", response);
+  console.log('Email has been successfully sent!');
 });
 
-module.exports = sendEmail;
+exports.sendPasswordResetTokenEmail = catchAsync(async (user, token) => {
+  const options = {
+    recipientsEmail: user.email,
+    subject: 'Password reset token (valid for 10 min).',
+    token: token,
+    html: passwordResetTemplate(user, token),
+  };
+
+  await sendEmail(options);
+});
